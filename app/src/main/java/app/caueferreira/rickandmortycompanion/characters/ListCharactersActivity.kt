@@ -1,5 +1,6 @@
 package app.caueferreira.rickandmortycompanion.characters
 
+import android.app.AlertDialog
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -9,6 +10,7 @@ import app.caueferreira.rickandmortycompanion.R
 import app.caueferreira.rickandmortycompanion.base.BaseActivity
 import app.caueferreira.rickandmortycompanion.databinding.ActivityListCharactersBinding
 import kotlinx.android.synthetic.main.activity_list_characters.view.*
+
 
 class ListCharactersActivity : BaseActivity<ListCharactersPresenter>(), ListCharacterView {
 
@@ -36,7 +38,9 @@ class ListCharactersActivity : BaseActivity<ListCharactersPresenter>(), ListChar
     }
 
     override fun showError(error: String) {
-
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(error)
+        builder.show()
     }
 
     override fun showLoading() {
@@ -46,7 +50,6 @@ class ListCharactersActivity : BaseActivity<ListCharactersPresenter>(), ListChar
 
     override fun hideLoading() {
         binding.progressVisibility = View.GONE
-
     }
 
     override fun instantiatePresenter(): ListCharactersPresenter {
