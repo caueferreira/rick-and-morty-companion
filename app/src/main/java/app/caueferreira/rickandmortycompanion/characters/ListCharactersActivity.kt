@@ -1,10 +1,12 @@
 package app.caueferreira.rickandmortycompanion.characters
 
-import android.app.AlertDialog
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
+import android.view.Menu
 import android.view.View
+import android.widget.Toast
 import app.caueferreira.core.view.EndlessRecyclerOnScrollListener
 import app.caueferreira.rickandmortycompanion.R
 import app.caueferreira.rickandmortycompanion.base.BaseActivity
@@ -12,7 +14,7 @@ import app.caueferreira.rickandmortycompanion.databinding.ActivityListCharacters
 import kotlinx.android.synthetic.main.activity_list_characters.view.*
 
 
-class ListCharactersActivity : BaseActivity<ListCharactersPresenter>(), ListCharacterView {
+class ListCharactersActivity : BaseActivity<ListCharactersPresenter>(), ListCharacterView, SearchView.OnQueryTextListener {
 
     private lateinit var binding: ActivityListCharactersBinding
     private val characterAdapter = CharacterAdapter()
@@ -33,14 +35,41 @@ class ListCharactersActivity : BaseActivity<ListCharactersPresenter>(), ListChar
         presenter.onViewCreated()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.search, menu)
+
+        val searchItem = menu.findItem(R.id.searchBar)
+
+        val searchView = searchItem.actionView as SearchView
+        searchView.setOnQueryTextListener(this)
+        searchView.isIconified = false
+        return true
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        presenter.filter(query)
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        if(newText == ""){
+            presenter.filter(newText)
+        }
+        return true
+    }
+
+
     override fun loadCharacter(character: CharacterViewState) {
         characterAdapter.addCharacter(character)
     }
 
+    override fun clear() {
+        characterAdapter.clear()
+    }
+
+
     override fun showError(error: String) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(error)
-        builder.show()
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
     }
 
     override fun showLoading() {

@@ -11,9 +11,9 @@ import io.reactivex.schedulers.Schedulers
 
 class RickAndMorty(private val rickMortyApi: RickMortyApi) {
 
-    fun characters(page: Int): Observable<Character>? {
+    fun characters(page: Int, filter: String?): Observable<Character>? {
         return rickMortyApi
-                .characters(page)
+                .characters(page, filter)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .map { characterListResponse: CharacterListResponse ->

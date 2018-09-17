@@ -9,7 +9,8 @@ import javax.inject.Inject
 
 class ListCharactersPresenter(listCharacterView: ListCharacterView) : BasePresenter<ListCharacterView>(listCharacterView) {
 
-    private var page = 1
+    private var FIRST_PAGE = 1
+    private var page = FIRST_PAGE
 
     @Inject
     lateinit var rickAndMorty: RickAndMorty
@@ -21,14 +22,26 @@ class ListCharactersPresenter(listCharacterView: ListCharacterView) : BasePresen
 
     fun loadCharacters() {
         loadCharacters(page)
-        page++
     }
 
-    private fun loadCharacters(page: Int) {
-        view.showLoading()
+    fun clear() {
+        page = FIRST_PAGE
+        view.clear()
+    }
 
+    fun filter(filter: String?) {
+        filter?.let {
+            clear()
+            loadCharacters(page, filter)
+        }
+    }
+
+
+    private fun loadCharacters(page: Int, filter: String){
+        this.page++
+        view.showLoading()
         subscription = rickAndMorty
-                .characters(page)!!
+                .characters(page, filter)!!
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .doOnTerminate { view.hideLoading() }
@@ -36,6 +49,10 @@ class ListCharactersPresenter(listCharacterView: ListCharacterView) : BasePresen
                         { character -> view.loadCharacter(CharacterViewState.fromCharacter(character)) },
                         { error -> view.showError(error.localizedMessage) }
                 )
+    }
+
+    private fun loadCharacters(page: Int) {
+        loadCharacters(page, "")
     }
 
     override fun onViewDestroyed() {

@@ -31,4 +31,9 @@ class CharacterAdapter : RecyclerView.Adapter<Holder>() {
     override fun getItemViewType(position: Int): Int {
         return characters[position].id
     }
+
+    fun clear(){
+        characters.clear()
+        notifyDataSetChanged()
+    }
 }
